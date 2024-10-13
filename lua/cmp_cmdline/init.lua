@@ -189,6 +189,14 @@ source.get_trigger_characters = function()
 end
 
 source.complete = function(self, params, callback)
+  -- NOTE: Check if the last character is '!'
+  -- `!` is so slow to complete. Only complete when at least one char is typed to narrow down the
+  -- candidates.
+  if params.context.cursor_before_line:match('!%s*$') then
+    callback({ items = {} })  -- Return empty completion
+    return
+  end
+
   local offset = 0
   local ctype = ''
   local items = {}
